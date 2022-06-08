@@ -2,7 +2,6 @@ package com.gm.controller;
 
 import com.gm.model.product;
 import com.gm.service.productService;
-import java.io.Console;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,7 +18,7 @@ public class productController {
     private productService service;
     
     @GetMapping("/findAll")
-    public List<product> FindProducts(){
+    public List<product> findAll(){
         return service.FindProducts();
     }
     
