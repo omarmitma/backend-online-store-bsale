@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,42 +18,58 @@ public class productController {
     @Autowired
     private productService service;
     
-    @GetMapping("/findAll")
-    public List<product> findAll(){
+    /* Obtener todos los productos */
+    @GetMapping("/")
+    public List<product> getProducts(){
         return service.FindProducts();
     }
     
-    @GetMapping("/findByCategory")
-    public List<product> findByCategory(@RequestParam("category")int category){
+    /* Obtener todos los productos por categoria */
+    @GetMapping("/bycategory")
+    public List<product> getProducts(@RequestParam("category")int category){
         return service.findByCategory(category);
     }
     
-    /* Obtener Cantidad de productos filtrados para la paginacion */
-    @GetMapping("/getAmountOfFilteredProducts")
-    public List<product> getAmountOfFilteredProducts(@RequestParam("category")int category,@RequestParam("name")String name){
-        return service.getAmountOfFilteredProducts(category, name);
+    /* Obtener todos los productos por nombre */
+    @GetMapping("/byname")
+    public List<product> getProducts(@RequestParam("name")String name){
+        return service.findByNameContaining(name);
     }
     
-    /* Obtener Productos filtrados ordenados */
-    @GetMapping("/filterProductsByNameASCWithLimit")
-    public List<product> filterProductsByNameASCWithLimit(@RequestParam("category")int category,@RequestParam("name")String name,
-            @RequestParam("limit")int limit, @RequestParam("offset")int offset){
-        return service.filterProductsByNameASCWithLimit(category, name, limit,offset);
+    /* Obtener Todos los productos y llamar al metodo segun parametro order */
+    @GetMapping("/order")
+    public List<product> getProducts(@RequestParam("order")String order,@RequestParam("limit")int limit, @RequestParam("offset")int offset){
+        
+        if(order.toLowerCase().equals("a-z"))return service.filterProductsOrderNameASCWithLimit(limit,offset);
+        else if(order.toLowerCase().equals("z-a"))return service.filterProductsOrderNameDESCWithLimit(limit,offset);
+        else if(order.toLowerCase().equals("preciomenor"))return service.filterProductsOrderPrecioASCWithLimit(limit,offset);
+        else if(order.toLowerCase().equals("preciomayor"))return service.filterProductsOrderPrecioDESCWithLimit(limit,offset);
+        else return service.filterProductsOrderNameASCWithLimit(limit,offset);
+        
     }
-    @GetMapping("/filterProductsByNameDESCWithLimit")
-    public List<product> filterProductsByNameDESCWithLimit(@RequestParam("category")int category,@RequestParam("name")String name,
-            @RequestParam("limit")int limit, @RequestParam("offset")int offset){
-        return service.filterProductsByNameDESCWithLimit(category, name, limit,offset);
+    
+    /* Obtener Todos los productos por nombre y llamar al metodo segun parametro order */
+    @GetMapping("/bynamewithorder")
+    public List<product> getProducts(@RequestParam("name")String name, @RequestParam("order")String order, @RequestParam("limit")int limit, @RequestParam("offset")int offset){
+        
+        if(order.toLowerCase().equals("a-z"))return service.filterProductsByNameOrderNameASCWithLimit(name,limit,offset);
+        else if(order.toLowerCase().equals("z-a"))return service.filterProductsByNameOrderNameDESCWithLimit(name,limit,offset);
+        else if(order.toLowerCase().equals("preciomenor"))return service.filterProductsByNameOrderPrecioASCWithLimit(name,limit,offset);
+        else if(order.toLowerCase().equals("preciomayor"))return service.filterProductsByNameOrderPrecioDESCWithLimit(name,limit,offset);
+        else return service.filterProductsByNameOrderNameASCWithLimit(name,limit,offset);
+        
     }
-    @GetMapping("/filterProductsByPrecioASCWithLimit")
-    public List<product> filterProductsByPrecioASCWithLimit(@RequestParam("category")int category,@RequestParam("name")String name,
-            @RequestParam("limit")int limit, @RequestParam("offset")int offset){
-        return service.filterProductsByPrecioASCWithLimit(category, name, limit,offset);
-    }
-    @GetMapping("/filterProductsByPrecioDESCWithLimit")
-    public List<product> filterProductsByPrecioDESCWithLimit(@RequestParam("category")int category,@RequestParam("name")String name,
-            @RequestParam("limit")int limit, @RequestParam("offset")int offset){
-        return service.filterProductsByPrecioDESCWithLimit(category, name, limit,offset);
+    
+    /* Obtener Todos los productos por categoria y llamar al metodo segun parametro order */
+    @GetMapping("/bycategorywithorder")
+    public List<product> getProducts(@RequestParam("category")int category, @RequestParam("order")String order, @RequestParam("limit")int limit, @RequestParam("offset")int offset){
+        
+        if(order.toLowerCase().equals("a-z"))return service.filterProductsByCategoryOrderNameASCWithLimit(category,limit,offset);
+        else if(order.toLowerCase().equals("z-a"))return service.filterProductsByCategoryAndNameDESCWithLimit(category,limit,offset);
+        else if(order.toLowerCase().equals("preciomenor"))return service.filterProductsByCategoryAndPrecioASCWithLimit(category,limit,offset);
+        else if(order.toLowerCase().equals("preciomayor"))return service.filterProductsByCategoryAndPrecioDESCWithLimit(category,limit,offset);
+        else return service.filterProductsByCategoryOrderNameASCWithLimit(category,limit,offset);
+        
     }
     
 }
